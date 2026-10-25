@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "altfinance-mcp"
+version = "0.4.7"
+description = "MCP server for querying auction results across 20 luxury and collectibles categories via the ALT/FNDATA API"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "ALT/FNDATA", email = "support@altfndata.com" },
+]
+keywords = ["mcp", "claude", "finance", "auctions", "luxury", "watches", "handbags", "jewelry", "appraisal", "valuation", "comparables", "collectibles", "art", "cars"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial",
+]
+dependencies = [
+    "mcp[cli]>=1.26.0,<2",  # mcp 2.0 (2026-07-28) removed mcp.server.fastmcp, which server.py imports
+    "httpx>=0.27.0",
+    "uvicorn>=0.30.0",
+]
+
+[project.optional-dependencies]
+# Hosted connector: OAuth state in DynamoDB + KMS (stdio users do not need it)
+hosted = ["boto3>=1.34"]
+test = ["pytest>=8", "pytest-asyncio>=0.23", "moto[dynamodb,kms]>=5", "boto3>=1.34"]
+
+[project.urls]
+Homepage = "https://altfndata.com"
+Documentation = "https://docs.altfndata.com"
+
+[project.scripts]
+altfinance-mcp = "altfinance_mcp:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/altfinance_mcp"]
