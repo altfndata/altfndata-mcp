@@ -255,10 +255,18 @@ else:
 # ── HTTP client factory ──────────────────────────────────────────
 
 def _client(api_key: str) -> httpx.AsyncClient:
-    """Create an HTTP client authenticated with the given API key."""
+    """Create an HTTP client authenticated with the given API key.
+
+    Every outbound request carries ``X-AFN-Connector: mcp`` so the API can attribute
+    the call to the in-assistant connector channel (distinct from a direct REST-API
+    caller, which this server is otherwise indistinguishable from — same X-API-Key
+    auth, a server-side httpx user agent, and no browser Origin). This is the
+    foundation of in-assistant attribution (GROWTH_STRATEGY.md §5.1) and the header
+    the taste tier later reuses for connector-only scoping (TASTE_TIER_PLAN.md §4.4).
+    """
     return httpx.AsyncClient(
         base_url=API_URL,
-        headers={"X-API-Key": api_key},
+        headers={"X-API-Key": api_key, "X-AFN-Connector": "mcp"},
         timeout=60.0,
     )
 
